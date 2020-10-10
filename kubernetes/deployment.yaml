@@ -1,0 +1,17 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: app-dep
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        name: app
+    spec:
+      containers:
+      - name: app
+        image: oitgaden/bulletinboard:1.0
+        ports:
+        - containerPort: 8080
