@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "RxProducer": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

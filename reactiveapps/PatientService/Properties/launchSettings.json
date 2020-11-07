@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "PatientService": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

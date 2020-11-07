@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: medhistory-service-deployment
+  labels:
+    app: medhistory-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: medhistory-service
+  template:
+    metadata:
+      labels:
+        app: medhistory-service
+    spec:
+      containers:
+      - name: medhistory-service
+        image: oitgaden/medhistoryservice:1.0

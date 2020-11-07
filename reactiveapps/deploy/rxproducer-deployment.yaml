@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rx-producer-deployment
+  labels:
+    app: rx-producer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rx-producer
+  template:
+    metadata:
+      labels:
+        app: rx-producer
+    spec:
+      containers:
+      - name: rx-producer
+        image: oitgaden/rxproducer:1.0
