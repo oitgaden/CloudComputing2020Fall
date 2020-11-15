@@ -4,6 +4,7 @@ metadata:
   name: patient-service-deployment
   labels:
     app: patient-service
+  namespace: healthcare-rx
 spec:
   replicas: 1
   selector:
@@ -17,3 +18,10 @@ spec:
       containers:
       - name: patient-service
         image: oitgaden/patientservice:1.0
+        resources:
+          limits:
+            cpu: 300m
+            memory: 500Mi
+          requests:
+            cpu: 300m
+            memory: 500Mi

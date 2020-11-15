@@ -2,6 +2,7 @@
 using System.Text.Json;
 using Confluent.Kafka;
 using DomainEvents;
+using MedHistoryService.Models;
 
 namespace MedHistoryService
 {
@@ -11,6 +12,8 @@ namespace MedHistoryService
 		private const string consumer_group = "medhistory-service";
 		private const string kafkaBrokers = "kafka.kafka-ca1:9092";
 		private static string instanceId = Guid.NewGuid().ToString();
+		private static string dbCollectionName = "Prescriptions";
+		private static string dbConnectionString = "mongodb://mongo";
 
 		static void Main(string[] args)
 		{
@@ -49,7 +52,17 @@ namespace MedHistoryService
 
 								var rxEvent = JsonSerializer.Deserialize(response.Value, typeof(RxPrescribedEvent), jsonOptions) as RxPrescribedEvent;
 
-								Console.WriteLine($"MedHistoryService({instanceId}) - Medication {rxEvent.Medication.DrugName} recorded for patient {rxEvent.Patient.LastName}, {rxEvent.Patient.FirstName}\n");
+								Console.WriteLine($"MedHistoryService({instanceId}) - Received {rxEvent.Medication.DrugName} for patient {rxEvent.Patient.LastName}, {rxEvent.Patient.FirstName}\n");
+
+								var rxPrescribed = new RxPrescribed {
+									Patient = new Models.Patient {
+										FirstName = rxEvent.Patient.FirstName,
+										LastName = rxEvent.Patient.LastName
+									},
+									Medication = new Models.Medication {
+										DrugName = rxEvent.Medication.DrugName
+									}
+								};
 							}
 							catch (ConsumeException e)
 							{

@@ -4,6 +4,7 @@ metadata:
   name: rx-producer-deployment
   labels:
     app: rx-producer
+  namespace: healthcare-rx
 spec:
   replicas: 1
   selector:
@@ -17,3 +18,10 @@ spec:
       containers:
       - name: rx-producer
         image: oitgaden/rxproducer:1.0
+        resources:
+          limits:
+            cpu: 300m
+            memory: 500Mi
+          requests:
+            cpu: 300m
+            memory: 500Mi

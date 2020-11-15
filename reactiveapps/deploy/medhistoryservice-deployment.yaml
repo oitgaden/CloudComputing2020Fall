@@ -4,8 +4,9 @@ metadata:
   name: medhistory-service-deployment
   labels:
     app: medhistory-service
+  namespace: healthcare-rx
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: medhistory-service
@@ -17,3 +18,10 @@ spec:
       containers:
       - name: medhistory-service
         image: oitgaden/medhistoryservice:1.0
+        resources:
+          limits:
+            cpu: 300m
+            memory: 500Mi
+          requests:
+            cpu: 300m
+            memory: 500Mi
