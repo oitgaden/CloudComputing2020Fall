@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: medhistory-service-deployment
+  name: medhistory-service
   labels:
     app: medhistory-service
   namespace: healthcare-rx
@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: medhistory-service
-        image: oitgaden/medhistoryservice:1.0
+        image: oitgaden/medhistoryservice:2.0
         resources:
           limits:
             cpu: 300m
