@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace MedHistoryService.Models
 {
-	public class RxPrescribed
+	public class Prescription
 	{
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]

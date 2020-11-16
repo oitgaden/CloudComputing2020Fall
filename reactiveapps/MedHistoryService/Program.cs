@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.Json;
 using Confluent.Kafka;
+using MongoDB.Driver;
 using DomainEvents;
 using MedHistoryService.Models;
 
@@ -12,8 +13,9 @@ namespace MedHistoryService
 		private const string consumer_group = "medhistory-service";
 		private const string kafkaBrokers = "kafka.kafka-ca1:9092";
 		private static string instanceId = Guid.NewGuid().ToString();
+		private static string dbName = "Patients";
 		private static string dbCollectionName = "Prescriptions";
-		private static string dbConnectionString = "mongodb://mongo";
+		private static string dbConnectionString = "mongodb://medhistory-service-db";
 
 		static void Main(string[] args)
 		{
@@ -40,7 +42,12 @@ namespace MedHistoryService
 			{
 				using (var consumer = new ConsumerBuilder<Ignore, string>(conf).Build())
 				{
+					var dbClient = new MongoClient(dbConnectionString);
+            		var database = dbClient.GetDatabase(dbName);
+
 					consumer.Subscribe(topic);
+
+            		var prescriptions = database.GetCollection<Prescription>(dbCollectionName);
 
 					try
 					{
@@ -54,7 +61,7 @@ namespace MedHistoryService
 
 								Console.WriteLine($"MedHistoryService({instanceId}) - Received {rxEvent.Medication.DrugName} for patient {rxEvent.Patient.LastName}, {rxEvent.Patient.FirstName}\n");
 
-								var rxPrescribed = new RxPrescribed {
+								var prescription = new Prescription {
 									Patient = new Models.Patient {
 										FirstName = rxEvent.Patient.FirstName,
 										LastName = rxEvent.Patient.LastName
@@ -63,6 +70,8 @@ namespace MedHistoryService
 										DrugName = rxEvent.Medication.DrugName
 									}
 								};
+            
+								prescriptions.InsertOne(prescription);
 							}
 							catch (ConsumeException e)
 							{
