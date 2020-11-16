@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.Json;
+using System.Threading;
 using Confluent.Kafka;
 using MongoDB.Driver;
 using DomainEvents;
@@ -13,9 +14,10 @@ namespace MedHistoryService
 		private const string consumer_group = "medhistory-service";
 		private const string kafkaBrokers = "kafka.kafka-ca1:9092";
 		private static string instanceId = Guid.NewGuid().ToString();
-		private static string dbName = "Patients";
-		private static string dbCollectionName = "Prescriptions";
+		private static string dbName = "patients";
+		private static string dbCollectionName = "prescriptions";
 		private static string dbConnectionString = "mongodb://medhistory-service-db";
+		// private static string dbConnectionString = "mongodb://localhost:27017";
 
 		static void Main(string[] args)
 		{
@@ -59,6 +61,19 @@ namespace MedHistoryService
 
 								var rxEvent = JsonSerializer.Deserialize(response.Value, typeof(RxPrescribedEvent), jsonOptions) as RxPrescribedEvent;
 
+								// var rxEvent = new RxPrescribedEvent
+								// {
+								// 	Patient = new DomainEvents.Patient
+								// 	{
+								// 		FirstName = "Tom",
+								// 		LastName = "Jones"
+								// 	},
+								// 	Medication = new DomainEvents.Medication
+								// 	{
+								// 		DrugName = "A Drug"
+								// 	}
+								// };
+
 								Console.WriteLine($"MedHistoryService({instanceId}) - Received {rxEvent.Medication.DrugName} for patient {rxEvent.Patient.LastName}, {rxEvent.Patient.FirstName}\n");
 
 								var prescription = new Prescription {
@@ -72,14 +87,22 @@ namespace MedHistoryService
 								};
             
 								prescriptions.InsertOne(prescription);
+
+								Console.WriteLine($"MedHistoryService({instanceId}) - Saved prescription {prescription.Medication.DrugName} for patient {prescription.Patient.LastName}, {prescription.Patient.FirstName}\n");
+
+								// Thread.Sleep(5000);
 							}
 							catch (ConsumeException e)
 							{
-								Console.WriteLine($"MedHistoryService({instanceId}) - Event consuming error occured: {e.Error.Reason}");
+								Console.WriteLine($"MedHistoryService({instanceId}) - Event consuming error occurred: {e.Error.Reason}");
 							}
 							catch (JsonException e)
 							{
-								Console.WriteLine($"PatientService({instanceId}) - JSON error occured: {e.Message}");
+								Console.WriteLine($"MedHistoryService({instanceId}) - JSON error occurred: {e.Message}");
+							}
+							catch (Exception e)
+							{
+								Console.WriteLine($"MedHistoryService({instanceId}) - Exception occurred: {e.Message}");
 							}
 						}
 					}
